@@ -23,4 +23,8 @@ There is three views in the project
         
         js code in detail
 
-    3.'/datatable/' - datatable implemented using cdn links  (not related to this project still very usefull)
+    3. '/modal/' - form
+
+        implemented with modal
+
+    4.'/datatable/' - datatable implemented using cdn links  (not related to this project still very usefull)

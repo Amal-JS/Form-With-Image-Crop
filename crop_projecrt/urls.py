@@ -23,6 +23,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('',views.index),
     path('trial/',views.js_trial,name='js_trial'),
-    path('datatable/',views.datatable,name='datatable')
+    path('datatable/',views.datatable,name='datatable'),
+    path('modal/',views.modal,name='modal')
 ]
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

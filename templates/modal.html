@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Image Crop</title>
+
+    <!-- Updated Bootstrap 5 CSS link from the Bootstrap CDN -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC"
+      crossorigin="anonymous"
+    />
+    <!-- Add this line to include the jQuery library, which is required by Bootstrap -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.11/cropper.css"
+    />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.11/cropper.js"></script>
+ 
+<style>
+    .cropper-container {
+  width: 759px !important;
+  height: 435px !important;
+}
+
+.cropper-crop-box{
+
+    width: 593px;
+    height: 315.132px;
+    transform: translateX(113.321px);
+
+}
+</style>
+
+</head>
+  <body class="bg-dark">
+    <div class="container">
+      <div class="row mt-5">
+        <div class="col-12 text-center text-white">
+          <h1 class="h1">Image Crop</h1>
+
+          <a class="btn btn-danger mt-5 mx-5" href="{% url 'js_trial' %}"> 
+            <!-- link to go to get the page with optimized code -->
+          click to go to js trial</a>
+
+          <a class="btn btn-danger mt-5" href="{% url 'modal' %}"> 
+              <!-- link to go to get the page with optimized code and used modal to edit -->
+            click to go to page with crop in modal</a>
+
+          
+          <form
+            method="POST"
+
+            enctype="multipart/form-data"
+
+            class="mt-5 text-center"
+          >
+            {% csrf_token %}
+
+           
+            
+            <div class="d-flex bg-dark text-white mb-3 p-2">
+                <label for="imageName" class="form-label w-25">Image Name</label>
+                <input type="text" class="form-control" id="imageName" name='name' aria-describedby="emailHelp">
+            </div>
+
+
+            <!-- Input fields for multiple images -->
+             <!-- first image field -->
+            <div class="d-flex bg-dark text-white mb-3 p-2">
+              <label for="imageFile1" class="form-label w-25">Image 1</label>
+              <input
+                type="file"
+                class="form-control"
+                id="id_image1"
+                name="image1"
+                accept="image/*"
+              />
+            </div>
+            <div class="d-flex bg-dark text-white mb-3 p-2">
+              <label for="imageFile2" class="form-label w-25">Image 2</label>
+              <input
+                type="file"
+                class="form-control"
+                id="id_image2"
+                name="image2"
+                accept="image/*"
+              />
+            </div>
+            <div class="d-flex bg-dark text-white mb-3 p-2">
+              <label for="imageFile3" class="form-label w-25">Image 3</label>
+              <input
+                type="file"
+                class="form-control"
+                id="id_image3"
+                name="image3"
+                accept="image/*"
+              />
+            </div>
+
+
+            <div class="modal fade" id="imageModal" tabindex="-1" role="dialog" aria-labelledby="imageModalLabel" aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                  <div class="modal-content" style="width:800px;height:600px;">
+                    <div class="modal-header">
+                      <h5 class="modal-title text-dark" id="imageModalLabel">Crop Image</h5>
+                      
+                       <svg id="closeModalIcon" xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="currentColor" class="bi bi-x-square-fill text-dark" viewBox="0 0 16 16">
+                            <path d="M2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H2zm3.354 4.646L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 1 1 .708-.708z"/>
+                          </svg>
+                      
+                    </div>
+                    <div class="modal-body">
+                      <div id="image-box-modal" class="image-container h-100 w-100"></div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-dark" data-dismiss="modal" id="close-btn">Close</button>
+                        <button type="button" class="btn btn-dark" id="crop-btn">Crop and Close</button>
+                       </div>
+                  </div>
+                </div>
+              </div>
+              
+
+            <button type="submit" class="btn btn-light">Submit</button>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <div class="container mt-5 bg-light p-4">
+      <div class="row">
+
+        <!-- display all objects  -->
+
+
+        {% for obj in all_objects %}
+
+        <div class="col-12 p-2 m-2 mt-5" style="border: 1px solid red">
+          <div class="card" style="width: 100%">
+            <div class="card-body text-center">
+              <h5 class="card-title h3">{{obj.name}}</h5>
+            </div>
+            <div class="d-flex justify-content-center">
+              <img
+                class="card-img-top w-25"
+                src="{{obj.image1.url}}"
+                style="border: 2px dotted black;max-height:300px;"
+                alt="Card image cap"
+              />
+              <img
+                class="card-img-top w-25"
+                src="{{obj.image2.url}}"
+                style="border: 2px dotted black;max-height:300px;"
+                alt="Card image cap"
+              />
+              <img
+                class="card-img-top w-25"
+                src="{{obj.image3.url}}"
+                style="border: 2px dotted black;max-height:300px;"
+                alt="Card image cap"
+              />
+            </div>
+          </div>
+        </div>
+
+        {% empty %}
+
+        <h1 class="">Nothing to display</h1>
+
+        {% endfor %}
+      </div>
+    </div>
+
+    <!-- Updated Bootstrap 5 JS and Popper.js scripts from the Bootstrap CDN -->
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
+      crossorigin="anonymous"
+    ></script>
+
+    <script>
+
+
+        //document fully loaded
+
+      document.addEventListener("DOMContentLoaded", function () {
+// Function to handle image upload and cropping for a specific image input
+function handleImageUpload(
+  inputId,
+  imageId,
+  modalId,
+  cropBtnId,
+  closeBtnId // Add close button ID argument
+) {
+  const input = document.getElementById(inputId);
+  const modal = new bootstrap.Modal(document.getElementById(modalId));
+  const cropBtn = document.getElementById(cropBtnId);
+  const closeBtn = document.getElementById(closeBtnId); // Get close button element
+
+  let cropper = null; // Declare cropper variable outside of the event listener
+
+  input.addEventListener("change", () => {
+    const img_data = input.files[0];
+    const url = URL.createObjectURL(img_data);
+
+    let image = null;
+
+    // Create a new image element
+    image = new Image();
+    image.id = imageId; // Set the ID for the image element
+    image.style.maxWidth = "600px";
+    image.style.maxHeight = "350px";
+
+    image.src = url;
+
+    modal.show(); // Show the modal
+
+    image.onload = function () {
+      const imageBoxModal = document.getElementById("image-box-modal");
+
+      // Clear modal content before opening it for a new image
+      imageBoxModal.innerHTML = "";
+      imageBoxModal.appendChild(image);
+
+      // Initialize Cropper after the image has loaded
+      // Delay the Cropper initialization by a short time (e.g., 100 milliseconds)
+      setTimeout(function () {
+        cropper = new Cropper(image, {
+          aspectRatio: 1, // Set the aspect ratio to 1:1 (square)
+          autoCropArea: 1,
+          viewMode: 1,
+          scalable: true,
+          zoomable: true,
+          movable: true,
+          minCropBoxWidth: 200,
+          minCropBoxHeight: 200,
+        });
+      }, 1000); // Adjust the delay time as needed
+    };
+
+    cropBtn.addEventListener("click", () => {
+      cropper.getCroppedCanvas().toBlob((blob) => {
+        let fileInputElement = document.getElementById(inputId);
+        let file = new File([blob], img_data.name, {
+          type: "image/*",
+          lastModified: new Date().getTime(),
+        });
+        let container = new DataTransfer();
+        container.items.add(file);
+        fileInputElement.files = container.files;
+
+        modal.hide(); // Hide the modal after cropping
+        updateInputField(inputId, blob); // Update the input field with the cropped image
+      });
+    });
+
+    closeBtn.addEventListener("click", () => {
+      modal.hide(); // Hide the modal when the close button is clicked
+    });
+
+    // JavaScript to close the modal when clicking the icon
+    document.getElementById("closeModalIcon").addEventListener("click", function () {
+      // Assuming you have a reference to the modal element by its ID
+      modal.hide(); // Hide the modal when the close button is clicked
+    });
+  });
+
+  // Function to update the input field with a Blob object
+  function updateInputField(inputId, blob) {
+    let fileInputElement = document.getElementById(inputId);
+    let file = new File([blob], "cropped_image.png", {
+      type: "image/png",
+      lastModified: new Date().getTime(),
+    });
+    let container = new DataTransfer();
+    container.items.add(file);
+    fileInputElement.files = container.files;
+  }
+}
+
+// Call the function for each image input
+handleImageUpload("id_image1", "image", "imageModal", "crop-btn", "close-btn");
+handleImageUpload("id_image2", "image2", "imageModal", "crop-btn", "close-btn");
+handleImageUpload("id_image3", "image3", "imageModal", "crop-btn", "close-btn");
+
+      });
+    </script>
+  </body>
+</html>

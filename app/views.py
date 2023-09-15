@@ -34,5 +34,19 @@ def js_trial(request):
 
 
 def datatable(request):
-    
+
     return render(request,'datatable.html')
+
+def modal(request):
+    all_objects = Photo.objects.all()
+
+    if request.method == 'POST':
+        form = PhotoForm(request.POST,request.FILES)
+        if form.is_valid():
+            print('form submitted')
+            form.save()
+
+        else:
+            print(form.errors)
+    form = PhotoForm()
+    return render(request,'modal.html',{'form':form,'all_objects':all_objects})
